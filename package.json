@@ -1,7 +1,7 @@
 {
   "name": "unch",
   "main": "server.js",
-  "version": "0.1",
+  "version": "0.0.1",
   "repository": "https://github.com/Justinette2175/unch",
   "dependencies": {
     "async": "^2.5.0",
