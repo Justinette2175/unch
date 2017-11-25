@@ -1,0 +1,22 @@
+version: '2'
+
+services:
+   db:
+      image: unch-db
+      ports:
+        - "27017:27017"
+   app:
+      depends_on:
+         - db
+      build: ./app
+      image: unch-node
+      ports:
+        - "8080:8080"
+      volumes:
+        - ./app:/app
+      links:
+        - "db:database"
+      environment:
+        PORT: 8080
+        DB: "db"
+        DB_PORT: 27017
