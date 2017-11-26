@@ -57,7 +57,7 @@ function createNetworkLink(originPerson, networkPersonParams, callback) {
           var contactInfo = networkPersonParams.contactInfo;
           delete networkPersonParams.contactInfo;
         }
-        var personalInfo = networkPersonParams;
+        var personalInfo = networkPersonParams.person;
         Person.create(personalInfo, contactInfo, function(err, person) {
           callback(err, person);
         });
