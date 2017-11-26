@@ -51,13 +51,13 @@ router.post('/user', function(req, res) {
 });
 
 function createNetworkLink(originPerson, networkPersonParams, callback) {
-  Person.findOne({name: networkPersonParams.name}, function(err, networkPerson) {
+  Person.findOne({name: networkPersonParams.person.name}, function(err, networkPerson) {
       if (networkPerson == null) {
         if (networkPersonParams.contactInfo) {
           var contactInfo = networkPersonParams.contactInfo;
           delete networkPersonParams.contactInfo;
         }
-        var personalInfo = networkPersonParams;
+        var personalInfo = networkPersonParams.person;
         Person.create(personalInfo, contactInfo, function(err, person) {
           callback(err, person);
         });
