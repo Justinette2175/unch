@@ -1,11 +1,11 @@
 $blue: #1E7AC4;
 
 body{
-  background-color: #ddd;
+  background-color: #eee;
 }
 
 header{
-  padding: 30px 0;
+  padding: 60px 0;
   text-align: center;
 }
 
@@ -13,15 +13,6 @@ main {
   padding: 50px;
   background-color: white;
   box-shadow: 4px 4px 16px rgba(0,0,0,0.2);
-}
-
-#relations{
-  margin-top:50px;
-  padding:50px 0;
-  border-top:solid 1px #444;
-  .relation{
-    padding:50px 0;
-  }
 }
 
 #relations-section{
@@ -40,6 +31,7 @@ h2 {
   font-size: 40px;
   font-weight: 600;
   margin-bottom: 40px;
+  color: #444;
 }
 
 .form-group {
@@ -87,11 +79,20 @@ form:after {
   text-align: left;
 }
 
-.btn.btn-primary {
+.btn {
   border-radius: 0;
   font-size: 20px;
   text-transform: uppercase;
   letter-spacing: 2px;
   font-weight: 600;
   padding: 10px 20px;
+}
+
+.btn-primary {
+  background-color: $blue;
+}
+
+.btn a {
+  color: white;
+  text-decoration: none !important;
 }

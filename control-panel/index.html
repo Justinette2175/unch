@@ -1,20 +1,103 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <link href="https://fonts.googleapis.com/css?family=Bungee+Shade" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M"
+    crossorigin="anonymous">
+    <style>
+      body {
+        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        font-size: 24px;
+        background-color: #333;
+        color: white;
+      }
+      table, pre {
+        margin: 50px auto;
+        font-weight: 200;
+        width: 700px;
+      }
+      pre {
+        padding: 0 20px;
+      }
+      thead {
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        font-weight: 400;
+        font-size: 16px;
+      }
+      #users tr:nth-of-type(2n) {
+        background-color: #444;
+      }
+      #users td {
+        padding: 2px 20px;
+        height: 50px;
+      }
+      #users td button {
+        height: 100%;
+        font-size: inherit;
+        font-weight: inherit;
+      }
+      #users td button:hover {
+        cursor: pointer;
+      }
+      #users td.stale {
+        color: red;
+        font-weight: 400;
+      }
+      #users td.fresh {
+        color: green;
+        font-weight: 400;
+      }
+    </style>
   </head>
   <body>
-    <ul>
-
-    </ul>
+    <table id='users' cellspacing='0' cellpadding='0'>
+      <thead>
+        <tr><td>Name</td><td>Phone Number</td><td>Status</td></tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+    <pre id='log' style='color:white'></pre>
     <script src='jquery.js'></script>
     <script>
-      $.ajax({
-        method: 'GET',
-        url: 'http://unch.me/api/users',
-        success: (result) => {
-          console.log(result);
-        }
-      });
+      const markStale = (id) => {
+        $.ajax({
+          method: 'GET',
+          url: `http://unch.me/api/user/makestale/${id}`,
+          success: (response) => {
+            console.log(response);
+          }
+        });
+      }
+      const update = () => {
+        $.ajax({
+          method: 'GET',
+          url: 'http://unch.me/api/users',
+          success: (result) => {
+            $('#users tbody').empty();
+            result.forEach(r => {
+              $('#users tbody').append(`
+                <tr>
+                  <td>${r.name}</td>
+                  <td>${r.contactInfo[0].phone}</td>
+                  <td class='${r.isStale ? 'stale' : 'fresh'}'>${r.isStale ? 'Out of Date' : 'Up to Date'}</td>
+                  <td><button class='btn btn-primary' onclick='markStale("${r._id}")'>Request Update</button></td>
+                </tr>
+              `);
+            })
+          }
+        });
+        $.ajax({
+          method: 'POST',
+          url: 'http://unch.me/api/logs',
+          success: (result) => {
+            if (result.success) {
+              $('#log').html(result.log);
+            }
+          }
+        });
+      };
+      setInterval(update, 500);
     </script>
   </body>
 </html>
