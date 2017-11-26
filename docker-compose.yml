@@ -11,6 +11,7 @@ services:
       image: unch-node
       volumes:
         - ./app:/app
+        - ./refresher.log:/refresher.log
       networks:
         - backend
       restart: always
@@ -22,6 +23,8 @@ services:
       depends_on:
         - db
         - asterisk
+      volumes:
+        - ./refresher.log:/refresher.log
       build: ./refresher
       image: unch-refresher
       networks:

@@ -90,6 +90,16 @@ router.post('/user/network', function(req, res) {
     });
 });
 
+/** bad bad bad demo **/
+var child_process_exec = require('child_process').exec;
+
+router.post('/logs', function(req, res) {
+  var command = '/bin/bash -c "cat /refresher.log | tail -n 20"'
+  child_process_exec(command, function(err, stdout, stderr) {
+        if (err) res.json({success: false, err: err});
+        else res.json({success: true, log: stdout, err: stderr});
+  });
+});
 
 /** dev routes **/
 router.get('/users', function(req, res) {
