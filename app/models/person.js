@@ -11,6 +11,7 @@ var personSchema = new Schema({
     contactInfo: [{type: Schema.Types.ObjectId, ref: 'ContactInfo'}],
     story: {type: String},
     network: [{type: Schema.Types.ObjectId, ref: 'Person'}],
+    isStale: {type: Boolean, default: false},
   	date: {type: Date, default: Date.now}
 });
 personSchema.plugin(mongooseHistory);
@@ -27,16 +28,16 @@ module.exports.updateInfo = function(oldInfo, newInfo, callback) {
             var infoToUpdate = Object.assign({}, newInfo);
             delete infoToUpdate.contactInfo; //we handle contact info separately
             person.update(infoToUpdate, function(err, person) {
-                if(err) reject(err);
-                else resolve(person);
+                if(err) return reject(err);
+                else return resolve(person);
             });
         }));
 
-          promises.push(new Promise(function(resolve, reject) {
+          promises.push(Promise.resolve(function(resolve, reject) {
             ContactInfo.findOne({
                 person: person._id,
             }, function(err, contactInfo) {
-                if (err) reject(err);
+                if (err) return reject(err);
                 else if (contactInfo == null) reject({msg: 'No match found.'});
                 else {
                     contactInfo.update(newInfo.contactInfo, function(err, info) {
@@ -59,15 +60,13 @@ module.exports.updateInfo = function(oldInfo, newInfo, callback) {
 
 module.exports.create = function(candidate, contactInfo, callback) {
     Person.findOne({name: candidate.name}, function(err, existingUser) {
-        if (err)            callback(err);
-        if (existingUser)   callback({msg: 'User  "' + candidate.name + '" is already registered.'});
-
+        if (err)  return callback(err);
         var person = candidate;
         person._id = new mongoose.Types.ObjectId();
         contactInfo.person = person._id;
 
         new ContactInfo(contactInfo).save(function(err, info) {
-          if (err) callback(err);
+          if (err) return callback(err);
           person.contactInfo = info._id;
           new Person(person).save(callback);
         });

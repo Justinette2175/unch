@@ -2,6 +2,7 @@ var config = require('../config');
 var express = require('express');
 var router = express.Router();
 var Person = require('../models/person');
+var mongoose = require('mongoose');
 var ContactInfo = require('../models/contactInfo');
 
 router.get('/user/:id', function(req, res) {
@@ -15,7 +16,10 @@ router.get('/user/makestale/:id', function(req, res) {
   Person.findOne({_id: req.params.id}).exec(function(err, person) {
       if (err) throw err;
       person.isStale = true;
-      person.save();
+      person.save(function(err, person) {
+        if (err) throw err;
+        res.json({success:true, id: person._id});
+      });
   });
 });
 
@@ -37,7 +41,6 @@ router.put('/user', function(req, res) {
       if (err) throw err;
       res.json({success: true, id: person._id});
   });
-
 });
 
 router.post('/user', function(req, res) {
@@ -47,23 +50,41 @@ router.post('/user', function(req, res) {
   });
 });
 
+function createNetworkLink(originPerson, networkPersonParams, callback) {
+  Person.findOne({name: networkPersonParams.name}, function(err, networkPerson) {
+      if (networkPerson == null) {
+        networkPersonParams._id = new mongoose.Types.ObjectId();
+        var newPerson = new Person(networkPersonParams);
+        newPerson.save();
+      }
+      var currentNetwork = originPerson.network;
+      currentNetwork.push(networkPerson._id);
+      originPerson.update({network: currentNetwork}, function(err, person) {
+        callback(err, person);
+      });
+  });
+}
+
 //** network **/
 router.post('/user/network', function(req, res) {
-  Person.findOne({name: req.body.person.name}).populate("network").exec(function(err, person) {
+  Person.findOne({name: req.body.person.name}).populate("network").exec(function(err, existingPerson) {
       if (err) res.json({success: false, err: err});
-      if (person == null) res.json({success: false, err: 'Person is not registered.'});
-      else {  //find network
-        Person.findOne({name: req.body.network.name}, function(err, networkPerson) {
-            if (networkPerson == null) {
-              var newPerson = new Person(networkPerson);
-              newPerson.save();
-            }
-            var currentNetwork = person.network;
-            currentNetwork.push(networkPerson._id);
-            person.update({network: currentNetwork}, function(err, person) {
-               if (err) throw err;
-               else res.json({success: true, id: person._id});
+      if (existingPerson == null) {
+        req.body.person._id = new mongoose.Types.ObjectId();
+        var newPerson = new Person(req.body.person);
+        newPerson.save(function(err, newPerson) {
+          if (err) throw err;
+          else {
+            createNetworkLink(newPerson, req.body.network, function(err, person) {
+              if (err) throw err;
+              else res.json({success: true, id: person._id});
             });
+          }
+        });
+      } else {
+        createNetworkLink(existingPerson, req.body.network, function(err, person) {
+          if (err) throw err;
+          else res.json({success: true, id: person._id});
         });
       }
     });
