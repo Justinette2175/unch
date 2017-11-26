@@ -7,7 +7,7 @@ const userForm = [
     name: 'name',
     type: 'text',
     id: '',
-    placeholder: '',
+    placeholder: 'Enter your full name',
     for: ''
   },
   {
@@ -22,6 +22,7 @@ const userForm = [
   {
     text: 'Phone',
     name: 'phone',
+    placeholder: '###-###-####',
     type: 'tel',
     half: true
   },
@@ -29,18 +30,21 @@ const userForm = [
     text: 'Email',
     name: 'email',
     type: 'email',
+    placeholder: 'you@email.com',
     half: true
   },
   {
     text: 'Social Media',
     name: 'socialMedia',
     type: 'text',
+    placeholder: 'facebook.com/########',
     half : true
   },
   {
     text: 'Address',
     name: 'address',
-    type: 'text'
+    type: 'text',
+    placeholder: 'Enter street address',
   }
 ]
 
@@ -123,7 +127,7 @@ function userFormMarkup(data) {
     return (`
       <div class="form-group ${formField.half ? 'half' : ''}">
         <label for=${formField.for}>${formField.text}</label>
-        <input type="name=${formField.type || ''}" class="form-control" name=${formField.name || ''} placeholder=${formField.placeholder || ''}>
+        <input type="name=${formField.type || ''}" class="form-control" name=${formField.name || ''} placeholder="${formField.placeholder || ''}">
       </div>
     `)
   })
@@ -198,7 +202,7 @@ function sendUser(formData){
         address: formattedData.address,
         phone: formattedData.phone,
         email: formattedData.email,
-        socialMedia: ''
+        socialMedia: formattedData.socialMedia
       }
     },
     success: (data) => {
@@ -208,9 +212,8 @@ function sendUser(formData){
     },
     error: (err) => {
       console.log(err);
-      debugger;
     }
-  })
+  });
 }
 
 $(document).ready(function () {
