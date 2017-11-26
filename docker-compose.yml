@@ -51,5 +51,18 @@ services:
       networks:
         - backend
       restart: always
+   web_frontend:
+      image: nginx
+      volumes:
+        - ./srv:/srv
+        - ./nginx.conf:/etc/nginx/conf.d/nginx.conf
+        - /etc/letsencrypt/live/unch.me/fullchain.pem:/fullchain.pem
+        - /etc/letsencrypt/live/unch.me/privkey.pem:/privkey.pem
+      ports:
+        - "66.70.209.159:80:80"
+        - "66.70.209.159:443:443"
+      networks:
+        - backend
+      restart: always
 networks:
   backend:
