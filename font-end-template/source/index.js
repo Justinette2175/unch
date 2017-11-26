@@ -7,7 +7,7 @@ const userForm = [
     name: 'name',
     type: 'text',
     id: '',
-    placeholder: '',
+    placeholder: 'Enter your full name',
     for: ''
   },
   {
@@ -22,6 +22,7 @@ const userForm = [
   {
     text: 'Phone',
     name: 'phone',
+    placeholder: '###-###-####',
     type: 'tel',
     half: true
   },
@@ -29,13 +30,55 @@ const userForm = [
     text: 'Email',
     name: 'email',
     type: 'email',
+    placeholder: 'you@email.com',
     half: true
+  },
+  {
+    text: 'Social Media',
+    name: 'socialMedia',
+    type: 'text',
+    placeholder: 'facebook.com/########',
+    half : true
   },
   {
     text: 'Address',
     name: 'address',
     type: 'text',
-    half: true,
+    placeholder: 'Enter street address',
+  }
+]
+
+const relationsForm = [
+  {
+    text: 'Name',
+    name: 'name',
+    type: 'text',
+    id: '',
+    placeholder: '',
+    for: ''
+  }, {
+    text: 'Date of birth',
+    name: 'dob',
+    type: 'text',
+    id: 'date',
+    placeholder: 'MM/DD/YYYY',
+    for: 'date'
+  }, {
+    text: 'Address',
+    name: 'address',
+    type: 'text'
+  }, {
+    text: 'Phone',
+    name: 'phone',
+    type: 'tel'
+  }, {
+    text: 'Email',
+    name: 'email',
+    type: 'email'
+  }, {
+    text: 'Social Media',
+    name: 'socialMedia',
+    type: 'text'
   }
 ]
 
@@ -55,29 +98,36 @@ const claimForm = [
     placeholder: 'MM/DD/YYYY',
     for: 'date'
   }, {
-    text: 'Address',
+    text: 'Contact Name',
     name: 'address',
     type: 'text'
   }, {
-    text: 'Phone',
-    name: 'phone',
-    type: 'tel'
+    text : 'Contact Date of birth',
+    name : 'dob',
+    type : 'text',
+    id : 'date',
+    placeholder : 'MM/DD/YYYY',
+    for : 'date'
   }, {
-    text: 'Email',
+    text: 'Contact email',
     name: 'email',
     type: 'email'
+  }, {
+  text: 'Known Contact Address',
+  name: 'email',
+  type: 'text'
   }
 ]
 
 
 
 
-function userFormMarkup() {
-  return userForm.map((formField)=>{
+function userFormMarkup(data) {
+  return data.map((formField)=>{
     return (`
       <div class="form-group ${formField.half ? 'half' : ''}">
         <label for=${formField.for}>${formField.text}</label>
-        <input type="name=${formField.type || ''}" class="form-control" name=${formField.name || ''} placeholder=${formField.placeholder || ''}>
+        <input type="name=${formField.type || ''}" class="form-control" name=${formField.name || ''} placeholder="${formField.placeholder || ''}">
       </div>
     `)
   })
@@ -94,25 +144,34 @@ function formatFormData(formData) {
 
 function createRelationMarkup(formData) {
   const fields = formData.map((field) => {
+    const fieldDisplay = userForm.filter((userField)=> {
+      return userField.name === field.name
+    })[0].text;
     return (`
-      <span>${field.name}</span>
-      <span>${field.value}</span>
-    `)
+      <div class="saved-relation">
+        <span>${fieldDisplay}</span>:
+        <span>${field.value}</span>
+      </div>
+    `);
   })
-
-  console.log('fields', fields)
 
   return (`
     <div class="saved-relation">
-      ${fields}
+      <h1>Contact</h1>
+      ${replaceAll(fields.join(), ",", '')}
     </div>
   `)
+}
+
+function replaceAll(str, find, replace) {
+  return str.replace(new RegExp(find, 'g'), replace);
 }
 
 function sendRelation(formData) {
   const formattedData = formatFormData(formData)
   console.log(formattedData)
   const savedMarkup = createRelationMarkup(formData)
+  formattedData.userId = localStorage.id;
   $('#relations').append(savedMarkup)
   // $.ajax({
   //   type: "POST",
@@ -143,7 +202,7 @@ function sendUser(formData){
         address: formattedData.address,
         phone: formattedData.phone,
         email: formattedData.email,
-        socialMedia: ''
+        socialMedia: formattedData.socialMedia
       }
     },
     success: (data) => {
@@ -153,14 +212,16 @@ function sendUser(formData){
     },
     error: (err) => {
       console.log(err);
-      debugger;
     }
-  })
+  });
 }
 
 $(document).ready(function () {
 
-  $('#new-user form').html(userFormMarkup())
+  $('#new-user form').html(userFormMarkup(userForm))
+  $('#new-relation form').html(userFormMarkup(relationsForm))
+  $('#new-claim form').html(userFormMarkup(claimForm))
+
   $('#open-new-relation').on('click', function (e) {
     e.preventDefault();
     console.log('click')
@@ -171,7 +232,6 @@ $(document).ready(function () {
 
   $('#add-relation').on('click', function(e){
     let formData = $('#new-relation form').serializeArray();
-    console.log(formData);
     $("#new-relation").toggle();
     $('#open-new-relation').toggle();
     sendRelation(formData);
@@ -181,5 +241,9 @@ $(document).ready(function () {
     let formData = $('#new-user form').serializeArray();
     sendUser(formData);
     nextSection();
+  })
+
+  $('#add-claim').on('click', function(e){
+    window.location.href = 'index.html';
   })
 })

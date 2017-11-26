@@ -43,11 +43,12 @@ h2 {
 }
 
 .form-group {
-  border-top: 2px solid #444;
+  border-top: 3px solid #444;
   margin-bottom: 40px;
   clear: both;
   label {
-    font-weight: 600;
+    font-weight: 700;
+    color: #444;
     font-size: 14px;
     text-transform: uppercase;
     letter-spacing: 2px;
@@ -74,4 +75,23 @@ h2 {
       margin-left: 5%;
     }
   }
+}
+
+form:after {
+  content: "";
+  display: block;
+  clear: both;
+}
+
+.button-wrap {
+  text-align: left;
+}
+
+.btn.btn-primary {
+  border-radius: 0;
+  font-size: 20px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-weight: 600;
+  padding: 10px 20px;
 }
