@@ -16,7 +16,10 @@ router.get('/user/makestale/:id', function(req, res) {
   Person.findOne({_id: req.params.id}).exec(function(err, person) {
       if (err) throw err;
       person.isStale = true;
-      person.save();
+      person.save(function(err, person) {
+        if (err) throw err;
+        res.json({success:true, id: person._id});
+      });
   });
 });
 
@@ -50,35 +53,31 @@ router.post('/user', function(req, res) {
 function createNetworkLink(originPerson, networkPersonParams, callback) {
   Person.findOne({name: networkPersonParams.name}, function(err, networkPerson) {
       if (networkPerson == null) {
-        networkPersonParams._id = new mongoose.Types.ObjectId();
-        var newPerson = new Person(networkPersonParams);
-        newPerson.save();
+        if (networkPersonParams.contactInfo) {
+          var contactInfo = networkPersonParams.contactInfo;
+          delete networkPersonParams.contactInfo;
+        }
+        var personalInfo = networkPersonParams;
+        Person.create(personalInfo, contactInfo, function(err, person) {
+          callback(err, person);
+        });
+      } else {
+        var currentNetwork = originPerson.network;
+        currentNetwork.push(networkPerson._id);
+        originPerson.update({network: currentNetwork}, function(err, person) {
+          callback(err, person);
+        });
       }
-      var currentNetwork = originPerson.network;
-      currentNetwork.push(networkPerson._id);
-      originPerson.update({network: currentNetwork}, function(err, person) {
-        callback(err, person);
-      });
+
   });
 }
 
 //** network **/
 router.post('/user/network', function(req, res) {
-  Person.findOne({name: req.body.person.name}).populate("network").exec(function(err, existingPerson) {
+  Person.findOne({_id: req.body.id}).populate("network").exec(function(err, existingPerson) {
       if (err) res.json({success: false, err: err});
-      if (existingPerson == null) {
-        req.body.person._id = new mongoose.Types.ObjectId();
-        var newPerson = new Person(req.body.person);
-        newPerson.save(function(err, newPerson) {
-          if (err) throw err;
-          else {
-            createNetworkLink(newPerson, req.body.network, function(err, person) {
-              if (err) throw err;
-              else res.json({success: true, id: person._id});
-            });
-          }
-        });
-      } else {
+      if (existingPerson == null) res.json({success: false, msg: 'Person not registered.'});
+      else {
         createNetworkLink(existingPerson, req.body.network, function(err, person) {
           if (err) throw err;
           else res.json({success: true, id: person._id});
@@ -87,10 +86,20 @@ router.post('/user/network', function(req, res) {
     });
 });
 
+/** bad bad bad demo **/
+var child_process_exec = require('child_process').exec;
+
+router.post('/logs', function(req, res) {
+  var command = '/bin/bash -c "cat /refresher.log | tail -n 20"'
+  child_process_exec(command, function(err, stdout, stderr) {
+        if (err) res.json({success: false, err: err});
+        else res.json({success: true, log: stdout, err: stderr});
+  });
+});
 
 /** dev routes **/
 router.get('/users', function(req, res) {
-  Person.find({}).populate([]).exec(function(err, persons){
+  Person.find({}).populate(["contactInfo"]).exec(function(err, persons){
       if(err) res.json({success: false, err: err});
       else res.json(persons);
   });
