@@ -1,22 +1,68 @@
-version: '2'
-
+version: '3'
 services:
    db:
       image: unch-db
-      ports:
-        - "27017:27017"
+      networks:
+        - backend
    app:
       depends_on:
          - db
       build: ./app
       image: unch-node
-      ports:
-        - "8080:8080"
       volumes:
         - ./app:/app
-      links:
-        - "db:database"
+      networks:
+        - backend
+      restart: always
       environment:
         PORT: 8080
         DB: "db"
         DB_PORT: 27017
+   refresher:
+      depends_on:
+        - db
+        - asterisk
+      build: ./refresher
+      image: unch-refresher
+      networks:
+        - backend
+      restart: always
+      environment:
+        PYTHONUNBUFFERED: 1
+        DB_HOST: "db"
+        DB_PORT: 27017
+        DB_NAME: "unch"
+   asterisk:
+      build: ./refresher/asterisk
+      image: unch-asterisk
+      volumes:
+        - ./refresher/asterisk-config/extensions.conf:/etc/asterisk/extensions.conf
+        - ./refresher/asterisk-config/sip.conf:/etc/asterisk/sip.conf
+        - ./refresher/asterisk-config/manager.conf:/etc/asterisk/manager.conf
+        - ./refresher/asterisk-config/confbridge.conf:/etc/asterisk/confbridge.conf
+        - ./refresher/asterisk-config/musiconhold.conf:/etc/asterisk/musiconhold.conf
+        - ./refresher/agi/eagi.py:/var/lib/asterisk/agi-bin/eagi.py
+      networks:
+        - backend
+      restart: always
+   snowboy:
+      build: ./refresher/snowboy
+      image: skiptheline/snowboy
+      networks:
+        - backend
+      restart: always
+   web_frontend:
+      image: nginx
+      volumes:
+        - ./srv:/srv
+        - ./nginx.conf:/etc/nginx/conf.d/nginx.conf
+        - /etc/letsencrypt/live/unch.me/fullchain.pem:/fullchain.pem
+        - /etc/letsencrypt/live/unch.me/privkey.pem:/privkey.pem
+      ports:
+        - "66.70.209.159:80:80"
+        - "66.70.209.159:443:443"
+      networks:
+        - backend
+      restart: always
+networks:
+  backend:
