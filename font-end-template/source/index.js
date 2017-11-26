@@ -48,7 +48,52 @@ const userForm = [
   }
 ]
 
-const relationsForm = userForm;
+const relationsForm = [
+  {
+    text: 'Name',
+    name: 'name',
+    type: 'text',
+    id: '',
+    placeholder: 'Enter full name',
+    for: ''
+  },
+  {
+    text : 'Date of birth',
+    name: 'dob',
+    type: 'text',
+    id: 'date',
+    placeholder : 'MM/DD/YYYY',
+    for : 'date',
+    half: true,
+  },
+  {
+    text: 'Phone',
+    name: 'phone',
+    placeholder: '###-###-####',
+    type: 'tel',
+    half: true
+  },
+  {
+    text: 'Email',
+    name: 'email',
+    type: 'email',
+    placeholder: 'you@email.com',
+    half: true
+  },
+  {
+    text: 'Social Media',
+    name: 'socialMedia',
+    type: 'text',
+    placeholder: 'facebook.com/########',
+    half : true
+  },
+  {
+    text: 'Address',
+    name: 'address',
+    type: 'text',
+    placeholder: 'Enter street address',
+  }
+]
 
 const claimForm = [
   {
@@ -139,7 +184,7 @@ function sendRelation(formData) {
   const formattedData = formatFormData(formData)
   $.ajax({
     type: "POST",
-    url:  "http://unch.me/api/user/network",
+    url:  "https://unch.me/api/user/network",
     data: {
       id: localStorage.getItem('id'),
       network: {
@@ -177,7 +222,7 @@ function sendUser(formData){
   const formattedData = formatFormData(formData);
   $.ajax({
     type: "POST",
-    url: "http://unch.me/api/user",
+    url: "https://unch.me/api/user",
     data: {
       person: {
         name: formattedData.name,
@@ -193,7 +238,8 @@ function sendUser(formData){
     success: (data) => {
       if (data.success) {
         localStorage.setItem('id', data.id);
-        nextSection();
+        localStorage.setItem('name', formattedData.name);
+        setTimeout(()=>window.location.href='relations.html', 250);
       } else {
         console.error(data.err.msg);
       }
@@ -202,6 +248,8 @@ function sendUser(formData){
 }
 
 $(document).ready(function () {
+
+  $("#user-name").text(localStorage.getItem('name') || 'new person');
 
   $('#new-user form').html(userFormMarkup(userForm))
   $('#new-relation form').html(userFormMarkup(relationsForm))
@@ -216,8 +264,6 @@ $(document).ready(function () {
   $('#add-user').on('click', ()=>{
     let formData = $('#new-user form').serializeArray();
     sendUser(formData);
-    nextSection();
-    $("#new-relation").toggle();
   })
 
   $('#add-claim').on('click', function(e){
