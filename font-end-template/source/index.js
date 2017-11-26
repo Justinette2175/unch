@@ -50,7 +50,7 @@ const userForm = [
 
 const relationsForm = [
   {
-    text: 'Name',
+    text: 'Relation #1: Name',
     name: 'name',
     type: 'text',
     id: '',
@@ -58,7 +58,7 @@ const relationsForm = [
     for: ''
   },
   {
-    text : 'Date of birth',
+    text: 'Relation #1: Date of birth',
     name: 'dob',
     type: 'text',
     id: 'date',
@@ -67,28 +67,28 @@ const relationsForm = [
     half: true,
   },
   {
-    text: 'Phone',
+    text: 'Relation #1: Phone',
     name: 'phone',
     placeholder: '###-###-####',
     type: 'tel',
     half: true
   },
   {
-    text: 'Email',
+    text: 'Relation #1: Email',
     name: 'email',
     type: 'email',
     placeholder: 'you@email.com',
     half: true
   },
   {
-    text: 'Social Media',
+    text: 'Relation #1: Social Media',
     name: 'socialMedia',
     type: 'text',
     placeholder: 'facebook.com/########',
     half : true
   },
   {
-    text: 'Address',
+    text: 'Relation #1: Address',
     name: 'address',
     type: 'text',
     placeholder: 'Enter street address',
@@ -170,7 +170,6 @@ function createRelationMarkup(formData) {
 
   return (`
     <div class="relation">
-      <h1>Contact</h1>
       ${replaceAll(fields.join(), ",", '')}
     </div>
   `)
@@ -202,7 +201,8 @@ function sendRelation(formData) {
     },
     success: (data) => {
       if (data.success) {
-        alert('Relation saved successfully');
+        $("#action").html('Relation added');
+        $(document).scrollTop(0);
         const savedMarkup = createRelationMarkup(formData)
         formattedData.userId = localStorage.getItem('id');
         $('#relations').append(savedMarkup)
@@ -218,8 +218,14 @@ function nextSection(){
   $("#relations-section").show();
 }
 
+let sending = false;
+
 function sendUser(formData){
   const formattedData = formatFormData(formData);
+  if (sending) {
+    return;
+  }
+  sending = true;
   $.ajax({
     type: "POST",
     url: "https://unch.me/api/user",

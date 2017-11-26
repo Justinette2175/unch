@@ -14,7 +14,7 @@
       table, pre {
         margin: 50px auto;
         font-weight: 200;
-        width: 700px;
+        width: 900px;
       }
       pre {
         padding: 0 20px;
@@ -24,6 +24,7 @@
         letter-spacing: 2px;
         font-weight: 400;
         font-size: 16px;
+        color: #aaa;
       }
       #users tr:nth-of-type(2n) {
         background-color: #444;
@@ -79,9 +80,9 @@
               $('#users tbody').append(`
                 <tr>
                   <td>${r.name}</td>
-                  <td>${r.contactInfo[0].phone}</td>
+                  <td>${r.contactInfo[0] ? r.contactInfo[0].phone : 'N/A'}</td>
                   <td class='${r.isStale ? 'stale' : 'fresh'}'>${r.isStale ? 'Out of Date' : 'Up to Date'}</td>
-                  <td><button class='btn btn-primary' onclick='markStale("${r._id}")'>Request Update</button></td>
+                  <td><button class='btn btn-${r.isStale ? 'secondary' : 'primary'}' onclick='markStale("${r._id}")'>${r.isStale ? 'Processing' : 'Request Update'}</button></td>
                 </tr>
               `);
             })
