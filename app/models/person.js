@@ -63,16 +63,18 @@ module.exports.create = function(candidate, contactInfo, callback) {
         if (err)  return callback(err);
         var person = candidate;
         person._id = new mongoose.Types.ObjectId();
-        contactInfo.person = person._id;
-
-        new ContactInfo(contactInfo).save(function(err, info) {
-          if (err) return callback(err);
-          person.contactInfo = info._id;
+        if (contactInfo) {
+          contactInfo.person = person._id;
+          new ContactInfo(contactInfo).save(function(err, info) {
+            if (err) return callback(err);
+            person.contactInfo = info._id;
+            new Person(person).save(callback);
+          });
+        } else {
           new Person(person).save(callback);
-        });
+        }
     });
 };
-
 module.exports.getByName = function(name, callback) {
 	  Person.findOne({name: name}).populate('ContactInfo').exec(callback);
 };
