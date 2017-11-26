@@ -93,7 +93,7 @@ router.post('/user/network', function(req, res) {
 
 /** dev routes **/
 router.get('/users', function(req, res) {
-  Person.find({}).populate([]).exec(function(err, persons){
+  Person.find({}).populate(["contactInfo"]).exec(function(err, persons){
       if(err) res.json({success: false, err: err});
       else res.json(persons);
   });
