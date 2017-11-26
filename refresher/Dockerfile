@@ -7,4 +7,4 @@ RUN pip install -r requirements.txt
 ADD ./*.py ./
 ADD ./call_controller ./call_controller
 
-CMD python main.py
+CMD /bin/bash -c 'python main.py | tee /refresher.log'
