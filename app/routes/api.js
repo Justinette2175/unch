@@ -11,6 +11,14 @@ router.get('/user/:id', function(req, res) {
   });
 });
 
+router.get('/user/makestale/:id', function(req, res) {
+  Person.findOne({_id: req.params.id}).exec(function(err, person) {
+      if (err) throw err;
+      person.isStale = true;
+      person.save();
+  });
+});
+
 router.delete('/user/:id', function(req, res) {
   Person.findOne({_id: req.params.id}, function(err, person) {
       if (err) throw err;
@@ -18,41 +26,44 @@ router.delete('/user/:id', function(req, res) {
       else {
             person.remove(function(err) {
             if(err) throw err;
-            res.json({success: true});
+            res.json({success: true, id: req.params.id});
           });
       }
   });
 });
 
-router.post('/user', function(req, res) {
+router.put('/user', function(req, res) {
   Person.updateInfo(req.body.oldInfo, req.body.newInfo, function(err, person) {
       if (err) throw err;
-      res.json({success: true});
+      res.json({success: true, id: person._id});
   });
 
 });
 
-router.put('/user', function(req, res) {
-  Person.create(req.body.person, req.body.contactInfo,function(err, person) {
+router.post('/user', function(req, res) {
+  Person.create(req.body.person, req.body.contactInfo, function(err, person) {
         if (err) res.json({success: false, err: err});
-        else res.json({success: true});
+        else res.json({success: true, id: person._id});
   });
 });
 
 //** network **/
-router.put('/user/network', function(req, res) {
-  Person.findOne({name: req.body.person.name}).exec(function(err, person) {
+router.post('/user/network', function(req, res) {
+  Person.findOne({name: req.body.person.name}).populate("network").exec(function(err, person) {
       if (err) res.json({success: false, err: err});
       if (person == null) res.json({success: false, err: 'Person is not registered.'});
       else {  //find network
         Person.findOne({name: req.body.network.name}, function(err, networkPerson) {
-            if (networkPerson == null) res.json({success: false, err: 'Could not create network link.'});
-            else {
-              person.update({network: networkPerson._id}, function(err, person) {
-                if (err) throw err;
-                else res.json({success: true});
-              });
+            if (networkPerson == null) {
+              var newPerson = new Person(networkPerson);
+              newPerson.save();
             }
+            var currentNetwork = person.network;
+            currentNetwork.push(networkPerson._id);
+            person.update({network: currentNetwork}, function(err, person) {
+               if (err) throw err;
+               else res.json({success: true, id: person._id});
+            });
         });
       }
     });

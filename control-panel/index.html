@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  </head>
+  <body>
+    <ul>
+
+    </ul>
+    <script src='jquery.js'></script>
+    <script>
+      $.ajax({
+        method: 'GET',
+        url: 'http://unch.me/api/users',
+        success: (result) => {
+          console.log(result);
+        }
+      });
+    </script>
+  </body>
+</html>
