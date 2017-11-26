@@ -19,21 +19,28 @@
 </head>
 
 <body>
-
-
   <div class="container">
     <header>
       <a href='/registration.html'><img class="logo" src="./images/UNHCR-logo.png" alt=""></a>
     </header>
     <main>
-      <div id="user-section">
-        <h2>Registration</h2>
-        <div id="new-user">
-          <form>
+      <div id="relations-section">
+        <h2><span class="check">✓</span> Registered successfully!</h2>
+        <h2>You may now add relations.</h2>
+        <h4>Add contact information for relations of <strong id='user-name'></strong></h4>
+        <div id="relations">
 
+        </div>
+        <div id="new-relation">
+          <form>
+            <div class="form-group">
+              <label for="exampleFormControlInput1">Name</label>
+              <input type="text" class="form-control" name="name" placeholder="Name">
+            </div>
           </form>
-          <div class="button-wrap">
-            <button type="button" class="btn btn-primary" id="add-user">Submit</button>
+          <div>
+            <button type="button" class="btn btn-primary" id="add-relation">Save Relation</button>
+            <button type="button" class="btn btn-secondary"><a href='registration.html'>Done</a></button>
           </div>
         </div>
       </div>

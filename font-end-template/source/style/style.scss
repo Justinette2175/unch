@@ -11,27 +11,38 @@ header{
 
 main {
   padding: 50px;
+  margin-bottom: 50px;
   background-color: white;
   box-shadow: 4px 4px 16px rgba(0,0,0,0.2);
 }
 
-#relations-section{
-  display:none;
-}
-
-#new-relation{
-  display:none;
+.check {
+  background-color: $blue;
+  color: white;
+  width: 40px;
+  text-align: center;
+  height: 40px;
+  display:inline-block;
+  border-radius: 20px;
+  font-size: 36px;
+  margin-right: 10px;
 }
 
 .logo{
   max-width:150px;
 }
 
-h2 {
+h2, h4 {
   font-size: 40px;
   font-weight: 600;
   margin-bottom: 40px;
   color: #444;
+}
+
+h4 {
+  margin-top: -30px;
+  font-weight: 300;
+  font-size: 20px;
 }
 
 .form-group {
@@ -95,4 +106,8 @@ form:after {
 .btn a {
   color: white;
   text-decoration: none !important;
+}
+
+.relation {
+  margin-bottom: 40px;
 }
