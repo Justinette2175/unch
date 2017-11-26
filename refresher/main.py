@@ -5,22 +5,26 @@ from call_controller.backend import Backend
 client = MongoClient(os.getenv('DB_HOST', 'db'), int(os.getenv('DB_PORT', '27017')))
 db = client[os.getenv('DB_NAME', 'unch')]
 
-b = Backend()
-b.__enter__()
+def _get_contact_info(person):
+    return db.contactinfos.find({ '_id': person['contactInfo'][0] })[0]
 
 def _update(doc):
     print('dialing!')
-    b.verify_and_dial(doc['contactInfo']['phone'])
+    with Backend() as b:
+        b.verify_and_dial(_get_contact_info(doc)['phone'], {
+            'name': doc['name'],
+            'other_name': 'Linus Torvalds'
+        })
 
 def _act(doc):
-    res = db.users.update_one(
+    res = db.people.update_one(
         {
             '_id': doc['_id'],
-            'stale': True
+            'isStale': True
         }, {
             '$set': {
-                'stale': False,
-                'updating': True,
+                'isStale': False,
+                'isUpdating': True,
                 'updateStart': datetime.datetime.utcnow()
             } })
     if res.matched_count < 1:
@@ -28,9 +32,9 @@ def _act(doc):
 
     def _finished(success):
         change = {
-                'updating': not success
+                'isUpdating': not success
             }
-        res = db.users.update_one(
+        res = db.people.update_one(
             {
                 '_id': doc['_id'],
             },
@@ -49,6 +53,6 @@ def _act(doc):
     _finished(True)
 
 while True:
-    for doc in db.users.find({ 'stale': True }):
+    for doc in db.people.find({ 'isStale': True }):
         _act(doc)
     time.sleep(1)

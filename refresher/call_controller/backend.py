@@ -47,19 +47,20 @@ class Backend:
   def _connect(self, num):
     print('CONNECT: {}'.format(num))
 
-  def _do_call(self, user):
+  def _do_call(self, user, data):
     future = self.adapter.Originate(
         Channel='LOCAL/{}@voipms-outbound'.format(user),
         Exten='1',
         Priority=1,
+        Variable='UNCH_NAME={}|UNCH_OTHER_NAME={}'.format(data['name'], data['other_name']),
         Context='skiptheline',
         CallerID='"SkipTheLine" <{}>'.format(config.dial_in_number),
         Async='yes',
       )
     print('Originate result: {}'.format(future.response))
 
-  def verify_and_dial(self, user):
+  def verify_and_dial(self, user, data):
     if not re.match('^(1?[0-9]{10}|4443)$', user):
       raise NumberFormatException()
 
-    self._do_call(user)
+    self._do_call(user, data)

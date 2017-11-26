@@ -11,6 +11,7 @@ services:
       image: unch-node
       volumes:
         - ./app:/app
+        - ./refresher.log:/refresher.log
       networks:
         - backend
       restart: always
@@ -22,6 +23,8 @@ services:
       depends_on:
         - db
         - asterisk
+      volumes:
+        - ./refresher.log:/refresher.log
       build: ./refresher
       image: unch-refresher
       networks:
@@ -41,6 +44,7 @@ services:
         - ./refresher/asterisk-config/manager.conf:/etc/asterisk/manager.conf
         - ./refresher/asterisk-config/confbridge.conf:/etc/asterisk/confbridge.conf
         - ./refresher/asterisk-config/musiconhold.conf:/etc/asterisk/musiconhold.conf
+        - ./refresher/asterisk-config/festival.conf:/etc/asterisk/festival.conf
         - ./refresher/agi/eagi.py:/var/lib/asterisk/agi-bin/eagi.py
       networks:
         - backend
@@ -61,6 +65,12 @@ services:
       ports:
         - "66.70.209.159:80:80"
         - "66.70.209.159:443:443"
+      networks:
+        - backend
+      restart: always
+   festival:
+      image: unch-festival
+      build: ./refresher/festival
       networks:
         - backend
       restart: always

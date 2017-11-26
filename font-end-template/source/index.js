@@ -7,7 +7,7 @@ const userForm = [
     name: 'name',
     type: 'text',
     id: '',
-    placeholder: 'Enter your full name',
+    placeholder: 'Enter full name',
     for: ''
   },
   {
@@ -48,39 +48,7 @@ const userForm = [
   }
 ]
 
-const relationsForm = [
-  {
-    text: 'Name',
-    name: 'name',
-    type: 'text',
-    id: '',
-    placeholder: '',
-    for: ''
-  }, {
-    text: 'Date of birth',
-    name: 'dob',
-    type: 'text',
-    id: 'date',
-    placeholder: 'MM/DD/YYYY',
-    for: 'date'
-  }, {
-    text: 'Address',
-    name: 'address',
-    type: 'text'
-  }, {
-    text: 'Phone',
-    name: 'phone',
-    type: 'tel'
-  }, {
-    text: 'Email',
-    name: 'email',
-    type: 'email'
-  }, {
-    text: 'Social Media',
-    name: 'socialMedia',
-    type: 'text'
-  }
-]
+const relationsForm = userForm;
 
 const claimForm = [
   {
@@ -156,7 +124,7 @@ function createRelationMarkup(formData) {
   })
 
   return (`
-    <div class="saved-relation">
+    <div class="relation">
       <h1>Contact</h1>
       ${replaceAll(fields.join(), ",", '')}
     </div>
@@ -169,23 +137,40 @@ function replaceAll(str, find, replace) {
 
 function sendRelation(formData) {
   const formattedData = formatFormData(formData)
-  console.log(formattedData)
-  const savedMarkup = createRelationMarkup(formData)
-  formattedData.userId = localStorage.id;
-  $('#relations').append(savedMarkup)
-  // $.ajax({
-  //   type: "POST",
-  //   url : "http://unch.me:8080/api/users/network",
-  //   data : formattedData,
-  // })
-  // .done(function (msg) {
-  //   alert("Data Saved: " + msg);
-  // });
+  $.ajax({
+    type: "POST",
+    url:  "http://unch.me/api/user/network",
+    data: {
+      id: localStorage.getItem('id'),
+      network: {
+        person: {
+          name: formattedData.name,
+          story: ''
+        },
+        contactInfo: {
+          address: formattedData.address,
+          phone: formattedData.phone,
+          email: formattedData.email,
+          socialMedia: formattedData.socialMedia
+        }
+      }
+    },
+    success: (data) => {
+      if (data.success) {
+        alert('Relation saved successfully');
+        const savedMarkup = createRelationMarkup(formData)
+        formattedData.userId = localStorage.getItem('id');
+        $('#relations').append(savedMarkup)
+      } else {
+        console.error(data.err.msg);
+      }
+    }
+  })
 }
 
 function nextSection(){
-  $("#user-section").toggle();
-  $("#relations-section").toggle();
+  $("#user-section").hide();
+  $("#relations-section").show();
 }
 
 function sendUser(formData){
@@ -206,12 +191,12 @@ function sendUser(formData){
       }
     },
     success: (data) => {
-      console.log("Data Saved: " + JSON.stringify(data, null, 2));
-      localStorage.userId = data.id
-      nextSection();
-    },
-    error: (err) => {
-      console.log(err);
+      if (data.success) {
+        localStorage.setItem('id', data.id);
+        nextSection();
+      } else {
+        console.error(data.err.msg);
+      }
     }
   });
 }
@@ -222,25 +207,17 @@ $(document).ready(function () {
   $('#new-relation form').html(userFormMarkup(relationsForm))
   $('#new-claim form').html(userFormMarkup(claimForm))
 
-  $('#open-new-relation').on('click', function (e) {
-    e.preventDefault();
-    console.log('click')
-    $("#new-relation").toggle();
-    $(this).toggle();
-    return false;
-  })
-
   $('#add-relation').on('click', function(e){
     let formData = $('#new-relation form').serializeArray();
-    $("#new-relation").toggle();
-    $('#open-new-relation').toggle();
     sendRelation(formData);
+    $('#new-relation input').val('');
   })
 
   $('#add-user').on('click', ()=>{
     let formData = $('#new-user form').serializeArray();
     sendUser(formData);
     nextSection();
+    $("#new-relation").toggle();
   })
 
   $('#add-claim').on('click', function(e){
