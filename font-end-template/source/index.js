@@ -32,6 +32,44 @@ const userForm = [
     text: 'Email',
     name: 'email',
     type: 'email'
+  }, {
+  text: 'Social Media',
+  name: 'socialMedia',
+  type: 'text'
+  }
+]
+
+const relationsForm = [
+  {
+    text: 'Name',
+    name: 'name',
+    type: 'text',
+    id: '',
+    placeholder: '',
+    for: ''
+  }, {
+    text: 'Date of birth',
+    name: 'dob',
+    type: 'text',
+    id: 'date',
+    placeholder: 'MM/DD/YYYY',
+    for: 'date'
+  }, {
+    text: 'Address',
+    name: 'address',
+    type: 'text'
+  }, {
+    text: 'Phone',
+    name: 'phone',
+    type: 'tel'
+  }, {
+    text: 'Email',
+    name: 'email',
+    type: 'email'
+  }, {
+    text: 'Social Media',
+    name: 'socialMedia',
+    type: 'text'
   }
 ]
 
@@ -65,7 +103,7 @@ const claimForm = [
     text: 'Contact email',
     name: 'email',
     type: 'email'
-}, {
+  }, {
   text: 'Known Contact Address',
   name: 'email',
   type: 'text'
@@ -97,27 +135,34 @@ function formatFormData(formData) {
 
 function createRelationMarkup(formData) {
   const fields = formData.map((field) => {
-
     const fieldDisplay = userForm.filter((userField)=> {
       return userField.name === field.name
-    })[0].text
+    })[0].text;
     return (`
-      <span>${fieldDisplay}</span> --
-      <span>${field.value}</span>
-    `)
+      <div class="saved-relation">
+        <span>${fieldDisplay}</span>:  
+        <span>${field.value}</span>
+      </div>
+    `);
   })
 
   return (`
     <div class="saved-relation">
-      ${fields}
+      <h1>Contact</h1>
+      ${replaceAll(fields.join(), ",", '')}
     </div>
   `)
+}
+
+function replaceAll(str, find, replace) {
+  return str.replace(new RegExp(find, 'g'), replace);
 }
 
 function sendRelation(formData) {
   const formattedData = formatFormData(formData)
   console.log(formattedData)
   const savedMarkup = createRelationMarkup(formData)
+  formattedData.userId = localStorage.id;
   $('#relations').append(savedMarkup)
   // $.ajax({
   //   type: "POST", 
@@ -152,7 +197,9 @@ function sendUser(formData){
 $(document).ready(function () {
 
   $('#new-user form').html(userFormMarkup(userForm))
+  $('#new-relation form').html(userFormMarkup(relationsForm))
   $('#new-claim form').html(userFormMarkup(claimForm))
+
   $('#open-new-relation').on('click', function (e) {
     e.preventDefault();
     console.log('click')
