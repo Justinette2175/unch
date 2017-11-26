@@ -40,8 +40,8 @@ module.exports.updateInfo = function(oldInfo, newInfo, callback) {
                 else if (contactInfo == null) reject({msg: 'No match found.'});
                 else {
                     contactInfo.update(newInfo.contactInfo, function(err, info) {
-                    if (err) reject(err);
-                    resolve(info);
+                    if (err) return reject(err);
+                    return resolve(info);
                   });
                 }
             });
