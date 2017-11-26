@@ -16,7 +16,10 @@ router.get('/user/makestale/:id', function(req, res) {
   Person.findOne({_id: req.params.id}).exec(function(err, person) {
       if (err) throw err;
       person.isStale = true;
-      person.save();
+      person.save(function(err, person) {
+        if (err) throw err;
+        res.json({success:true, id: person._id});
+      });
   });
 });
 

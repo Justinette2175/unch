@@ -11,6 +11,7 @@ var personSchema = new Schema({
     contactInfo: [{type: Schema.Types.ObjectId, ref: 'ContactInfo'}],
     story: {type: String},
     network: [{type: Schema.Types.ObjectId, ref: 'Person'}],
+    isStale: {type: Boolean, default: false},
   	date: {type: Date, default: Date.now}
 });
 personSchema.plugin(mongooseHistory);
