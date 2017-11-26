@@ -43,11 +43,12 @@ h2 {
 }
 
 .form-group {
-  border-top: 2px solid #444;
+  border-top: 3px solid #444;
   margin-bottom: 40px;
   clear: both;
   label {
-    font-weight: 600;
+    font-weight: 700;
+    color: #444;
     font-size: 14px;
     text-transform: uppercase;
     letter-spacing: 2px;
@@ -70,8 +71,14 @@ h2 {
       float: left;
       clear: none;
     }
-    &.half:nth-of-type(2n+1) {
+    &.half+.half:nth-of-type(2n+1) {
       margin-left: 5%;
     }
   }
+}
+
+form:after {
+  content: "";
+  display: block;
+  clear: both;
 }
