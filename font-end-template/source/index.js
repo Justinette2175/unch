@@ -17,21 +17,25 @@ const userForm = [
     id: 'date',
     placeholder : 'MM/DD/YYYY',
     for : 'date',
+    half: true,
+  },
+  {
+    text: 'Phone',
+    name: 'phone',
+    type: 'tel',
+    half: true
+  },
+  {
+    text: 'Email',
+    name: 'email',
+    type: 'email',
+    half: true
   },
   {
     text: 'Address',
     name: 'address',
     type: 'text',
-  },
-  {
-    text: 'Phone',
-    name: 'phone',
-    type: 'tel'
-  },
-  {
-    text: 'Email',
-    name: 'email',
-    type: 'email'
+    half: true,
   }
 ]
 
@@ -71,7 +75,7 @@ const claimForm = [
 function userFormMarkup() {
   return userForm.map((formField)=>{
     return (`
-      <div class="form-group">
+      <div class="form-group ${formField.half ? 'half' : ''}">
         <label for=${formField.for}>${formField.text}</label>
         <input type="name=${formField.type || ''}" class="form-control" name=${formField.name || ''} placeholder=${formField.placeholder || ''}>
       </div>
@@ -127,15 +131,29 @@ function nextSection(){
 
 function sendUser(formData){
   const formattedData = formatFormData(formData);
-  console.log(formattedData)
   $.ajax({
     type: "POST",
-    url: "http://unch.me:8080/api/users/",
-    data: formattedData,
+    url: "http://unch.me/api/user",
+    data: {
+      person: {
+        name: formattedData.name,
+        story: ''
+      },
+      contactInfo: {
+        address: formattedData.address,
+        phone: formattedData.phone,
+        email: formattedData.email,
+        socialMedia: ''
+      }
+    },
     success: (data) => {
-      alert("Data Saved: " + data);
-      locoalStorage.userId = data.id
+      console.log("Data Saved: " + JSON.stringify(data, null, 2));
+      localStorage.userId = data.id
       nextSection();
+    },
+    error: (err) => {
+      console.log(err);
+      debugger;
     }
   })
 }
