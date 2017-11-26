@@ -1,9 +1,8 @@
 {
-  "name": "specLife",
+  "name": "unch",
   "main": "server.js",
-  "version": "0.1.2",
-  "description": "Essential modules for Spectating Life website",
-  "repository": "https://bitbucket.org/civim/spectating-life",
+  "version": "0.0.1",
+  "repository": "https://github.com/Justinette2175/unch",
   "dependencies": {
     "async": "^2.5.0",
     "babel-polyfill": "^6.23.0",
@@ -26,9 +25,7 @@
     "passport": "^0.3.2",
     "passport-local": "^1.0.0",
     "path": "^0.12.7",
-    "react-redux": "^5.0.6",
-    "redux": "^3.7.2",
-    "sharp": "^0.15.1"
+    "mongoose-history": "0.4.2"
   },
   "devDependencies": {
     "babel-core": "^6.24.0",
@@ -45,10 +42,6 @@
     "grunt-webpack": "^2.0.1",
     "gruntify-eslint": "^3.1.0",
     "html-webpack-plugin": "^2.28.0",
-    "react": "^15.4.2",
-    "react-dom": "^15.4.2",
-    "react-dropzone": "^3.12.2",
-    "redux-devtools": "^3.4.0",
     "superagent": "^3.5.2",
     "webpack": "^2.3.3"
   }
