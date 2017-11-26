@@ -5,12 +5,13 @@ from call_controller.backend import Backend
 client = MongoClient(os.getenv('DB_HOST', 'db'), int(os.getenv('DB_PORT', '27017')))
 db = client[os.getenv('DB_NAME', 'unch')]
 
-b = Backend()
-b.__enter__()
-
 def _update(doc):
     print('dialing!')
-    b.verify_and_dial(doc['contactInfo']['phone'])
+    with Backend() as b:
+        b.verify_and_dial(doc['contactInfo']['phone'], {
+            'name': doc['name'],
+            'other_name': 'Linus Torvalds'
+        })
 
 def _act(doc):
     res = db.users.update_one(
