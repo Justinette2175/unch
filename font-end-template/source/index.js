@@ -12,8 +12,8 @@ const userForm = [
   },
   {
     text : 'Date of birth',
-    name: 'dob', 
-    type: 'text', 
+    name: 'dob',
+    type: 'text',
     id: 'date',
     placeholder : 'MM/DD/YYYY',
     for : 'date',
@@ -22,7 +22,7 @@ const userForm = [
     text: 'Address',
     name: 'address',
     type: 'text',
-  }, 
+  },
   {
     text: 'Phone',
     name: 'phone',
@@ -85,7 +85,7 @@ function formatFormData(formData) {
     console.log(field)
     acc[field.name] = field.value
     return acc;
-  }, {}) 
+  }, {})
 }
 
 function createRelationMarkup(formData) {
@@ -111,7 +111,7 @@ function sendRelation(formData) {
   const savedMarkup = createRelationMarkup(formData)
   $('#relations').append(savedMarkup)
   // $.ajax({
-  //   type: "POST", 
+  //   type: "POST",
   //   url : "http://unch.me:8080/api/users/network",
   //   data : formattedData,
   // })
@@ -128,16 +128,16 @@ function nextSection(){
 function sendUser(formData){
   const formattedData = formatFormData(formData);
   console.log(formattedData)
-    // $.ajax({
-    //   type: "POST", 
-    //   url : "http://unch.me:8080/api/users/",
-    //   data : formattedData,
-    // })
-    // .done(function (data) {
-    //   alert("Data Saved: " + data);
-    //   locoalStorage.userId = data.id
-    //   nextSection();
-    // });
+  $.ajax({
+    type: "POST",
+    url: "http://unch.me:8080/api/users/",
+    data: formattedData,
+    success: (data) => {
+      alert("Data Saved: " + data);
+      locoalStorage.userId = data.id
+      nextSection();
+    }
+  })
 }
 
 $(document).ready(function () {
