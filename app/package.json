@@ -24,7 +24,8 @@
     "orchestrate": "^0.8.0",
     "passport": "^0.3.2",
     "passport-local": "^1.0.0",
-    "path": "^0.12.7"
+    "path": "^0.12.7",
+    "mongoose-history": "0.4.2"
   },
   "devDependencies": {
     "babel-core": "^6.24.0",

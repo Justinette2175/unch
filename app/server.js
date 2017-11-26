@@ -115,13 +115,15 @@ app.use(express.static(staticPath));
 
 var index = require('./routes/index');
 var user = require('./routes/user');
+var api = require('./routes/api');
 
 app.use('/', index);
 app.use('/user', user);
+app.use('/api', api);
 
 app.use(function(req, res) {
-            req.flash('error', '404 content not found.');
-            res.redirect('/');
+      req.flash('error', '404 content not found.');
+      //res.redirect('/');
 });
 
 /////////////////////////////////////
