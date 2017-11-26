@@ -71,7 +71,7 @@ h2 {
       float: left;
       clear: none;
     }
-    &.half+.half:nth-of-type(2n+1) {
+    &.half:nth-of-type(2n+1) {
       margin-left: 5%;
     }
   }
@@ -81,4 +81,17 @@ form:after {
   content: "";
   display: block;
   clear: both;
+}
+
+.button-wrap {
+  text-align: left;
+}
+
+.btn.btn-primary {
+  border-radius: 0;
+  font-size: 20px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-weight: 600;
+  padding: 10px 20px;
 }

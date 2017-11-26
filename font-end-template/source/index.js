@@ -28,18 +28,19 @@ const userForm = [
   {
     text: 'Email',
     name: 'email',
-    type: 'email'
-  }, {
-  text: 'Social Media',
-  name: 'socialMedia',
-  type: 'text',
-half : true
+    type: 'email',
+    half: true
+  },
+  {
+    text: 'Social Media',
+    name: 'socialMedia',
+    type: 'text',
+    half : true
   },
   {
     text: 'Address',
     name: 'address',
-    type: 'text',
-    half: true,
+    type: 'text'
   }
 ]
 
@@ -144,7 +145,7 @@ function createRelationMarkup(formData) {
     })[0].text;
     return (`
       <div class="saved-relation">
-        <span>${fieldDisplay}</span>:  
+        <span>${fieldDisplay}</span>:
         <span>${field.value}</span>
       </div>
     `);
