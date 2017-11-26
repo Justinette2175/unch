@@ -1,0 +1,4 @@
+pymongo
+asterisk-ami
+bottle
+requests
