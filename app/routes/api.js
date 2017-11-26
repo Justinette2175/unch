@@ -51,21 +51,25 @@ router.post('/user', function(req, res) {
 });
 
 function createNetworkLink(originPerson, networkPersonParams, callback) {
-  Person.findOne({name: networkPersonParams.person.name}, function(err, networkPerson) {
-      if (networkPerson == null) {
+  Person.findOne({name: networkPersonParams}, function(err, networkPerson) {
+      if (networkPerson == null) { //destination doesnt exist, create it
         if (networkPersonParams.contactInfo) {
           var contactInfo = networkPersonParams.contactInfo;
           delete networkPersonParams.contactInfo;
         }
-        var personalInfo = networkPersonParams.person;
+        var personalInfo = networkPersonParams;
         Person.create(personalInfo, contactInfo, function(err, person) {
-          callback(err, person);
+          var currentNetwork = originPerson.network;
+          currentNetwork.push(person._id);
+          originPerson.update({network: currentNetwork}, function(err, updatedPerson) {
+            callback(err, updatedPerson);
+          });
         });
       } else {
         var currentNetwork = originPerson.network;
         currentNetwork.push(networkPerson._id);
-        originPerson.update({network: currentNetwork}, function(err, person) {
-          callback(err, person);
+        originPerson.update({network: currentNetwork}, function(err, updatedPerson) {
+          callback(err, updatedPerson);
         });
       }
 
