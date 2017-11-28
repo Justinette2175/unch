@@ -206,6 +206,7 @@ function sendRelation(formData) {
         const savedMarkup = createRelationMarkup(formData)
         formattedData.userId = localStorage.getItem('id');
         $('#relations').append(savedMarkup)
+        alert('Relation added!');
       } else {
         console.error(data.err.msg);
       }
